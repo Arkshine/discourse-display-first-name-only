@@ -1,0 +1,22 @@
+#user-card {
+  .names > h1:not(.first-name-only) {
+    display: none;
+    visibility: hidden;
+  }
+}
+
+.user-summary-page {
+  .user-profile-names {
+    display: flex;
+    flex-direction: column;
+
+    &__primary:not(.first-name-only) {
+      display: none;
+      visibility: hidden;
+    }
+
+    span:has(.first-name-only) {
+      order: -1;
+    }
+  }
+}

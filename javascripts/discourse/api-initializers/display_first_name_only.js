@@ -5,11 +5,17 @@ import ProfileFirstName from "../components/profile-first-name";
 import UserCardFirstName from "../components/user-card-first-name";
 
 export default apiInitializer("1.8.0", (api) => {
+  const siteSettings = api.container.lookup("service:site-settings");
+
+  if (!siteSettings.enable_names || siteSettings.prioritize_username_in_ux) {
+    return;
+  }
+
   api.renderInOutlet("user-card-after-username", UserCardFirstName);
   api.renderInOutlet("user-post-names", ProfileFirstName);
 
   api.reopenWidget("poster-name", {
-    userLink(attrs, text) {
+    userLink(attrs) {
       return h(
         "a",
         {

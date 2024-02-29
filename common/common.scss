@@ -1,22 +1,7 @@
-#user-card {
-  .names > h1:not(.first-name-only) {
-    display: none;
-    visibility: hidden;
-  }
-}
-
-.user-main {
-  .user-profile-names {
-    display: flex;
-    flex-direction: column;
-
-    &__primary:not(.first-name-only) {
+@if $hide_username_on_login == "true" {
+  #login-form .input-group.create-account {
+    &__username {
       display: none;
-      visibility: hidden;
-    }
-
-    span:has(.first-name-only) {
-      order: -1;
     }
   }
 }

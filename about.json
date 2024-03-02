@@ -1,6 +1,6 @@
 {
-  "about_url": "TODO: Put your theme's public repo or Meta topic URL here",
-  "license_url": "TODO: Put your theme's LICENSE URL here",
+  "about_url": "https://github.com/Arkshine/discourse-display-first-name-only/blob/main/README.md",
+  "license_url": "https://github.com/Arkshine/discourse-display-first-name-only/blob/main/LICENSE",
   "assets": {},
   "name": "Display First Name Only",
   "component": true

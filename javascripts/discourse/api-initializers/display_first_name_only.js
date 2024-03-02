@@ -26,6 +26,11 @@ export default apiInitializer("1.8.0", (api) => {
       // do nothing.
     },
 
+    init() {
+      this._super(...arguments);
+      this.prefillUsernameFromName();
+    },
+
     @observes("model.accountEmail", "model.accountName")
     prefillUsernameFromName() {
       if (this.prefilledUsername) {
@@ -34,6 +39,11 @@ export default apiInitializer("1.8.0", (api) => {
         }
         this.set("prefilledUsername", null);
       }
+
+      if (!this.model.accountName?.length) {
+        return;
+      }
+
       if (this.get("nameValidation.ok")) {
         discourseDebounce(
           this,

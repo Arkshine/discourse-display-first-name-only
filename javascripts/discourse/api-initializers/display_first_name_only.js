@@ -13,26 +13,31 @@ export default apiInitializer("1.8.0", (api) => {
     return;
   }
 
-  // Rremoves the number at the end of string
+  // Removes the number at the end of string.
+  // E.g. "username1" => "username"
   api.formatUsername((username) => {
     return username.replace(/\d+$/, "");
   });
 
-  // Prefilling the username based on the first name
+  // Prefilling the username based on the first name.
   api.modifyClass("component:modal/create-account", {
     pluginId: "display-first-name-only",
 
     prefillUsername() {
-      // do nothing.
+      // do nothing by overwriting the method.
     },
 
     init() {
       this._super(...arguments);
-      this.prefillUsernameFromName();
+
+      if (!this.model.skipConfirmation) {
+        // When the modal opens, check immediately if we can prefill the username.
+        this.prefillUsernameFromName();
+      }
     },
 
     @observes("model.accountEmail", "model.accountName")
-    prefillUsernameFromName() {
+    prefillUsernameFromName(data) {
       if (this.prefilledUsername) {
         if (this.model.accountUsername === this.prefilledUsername) {
           this.set("model.accountUsername", "");
@@ -45,29 +50,31 @@ export default apiInitializer("1.8.0", (api) => {
       }
 
       if (this.get("nameValidation.ok")) {
-        discourseDebounce(
-          this,
-          async () => {
-            const name = this.accountName.trim().split(/\s/)[0];
-            if (!name.length) {
-              return;
-            }
-            const result = await User.checkUsername(name, this.accountEmail);
+        const checkUsername = async () => {
+          const name = this.accountName.trim().split(/\s/)[0];
+          if (!name.length) {
+            return;
+          }
+          const result = await User.checkUsername(name, this.accountEmail);
 
-            if (result.suggestion) {
-              this.setProperties({
-                accountUsername: result.suggestion,
-                prefilledUsername: result.suggestion,
-              });
-            } else {
-              this.setProperties({
-                accountUsername: name,
-                prefilledUsername: name,
-              });
-            }
-          },
-          500
-        );
+          if (result.suggestion) {
+            this.setProperties({
+              accountUsername: result.suggestion,
+              prefilledUsername: result.suggestion,
+            });
+          } else {
+            this.setProperties({
+              accountUsername: name,
+              prefilledUsername: name,
+            });
+          }
+        };
+
+        if (!data) {
+          checkUsername();
+        } else {
+          discourseDebounce(this, () => checkUsername(), 500);
+        }
       }
     },
   });

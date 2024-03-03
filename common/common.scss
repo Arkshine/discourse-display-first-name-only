@@ -1,7 +1,0 @@
-@if $hide_username_on_login == "true" {
-  #login-form .input-group.create-account {
-    &__username {
-      display: none;
-    }
-  }
-}

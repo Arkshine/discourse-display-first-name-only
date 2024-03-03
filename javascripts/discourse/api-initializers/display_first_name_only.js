@@ -4,15 +4,6 @@ import discourseDebounce from "discourse-common/lib/debounce";
 import { observes } from "discourse-common/utils/decorators";
 
 export default apiInitializer("1.8.0", (api) => {
-  const siteSettings = api.container.lookup("service:site-settings");
-
-  if (
-    !siteSettings.full_name_required ||
-    !siteSettings.prioritize_username_in_ux
-  ) {
-    return;
-  }
-
   // Removes the number at the end of string.
   // E.g. "username1" => "username"
   api.formatUsername((username) => {
@@ -23,58 +14,42 @@ export default apiInitializer("1.8.0", (api) => {
   api.modifyClass("component:modal/create-account", {
     pluginId: "display-first-name-only",
 
-    prefillUsername() {
-      // do nothing by overwriting the method.
-    },
-
     init() {
       this._super(...arguments);
 
       if (!this.model.skipConfirmation) {
         // When the modal opens, check immediately if we can prefill the username.
-        this.prefillUsernameFromName();
+        this.prefillUsername();
       }
     },
 
-    @observes("model.accountEmail", "model.accountName")
-    prefillUsernameFromName(data) {
-      if (this.prefilledUsername) {
-        if (this.model.accountUsername === this.prefilledUsername) {
-          this.set("model.accountUsername", "");
-        }
-        this.set("prefilledUsername", null);
-      }
-
-      if (!this.model.accountName?.length) {
+    @observes("model.accountUsername")
+    prefillUsername(data) {
+      if (this.prefilledUsername === this.model.accountUsername) {
         return;
       }
 
-      if (this.get("nameValidation.ok")) {
-        const checkUsername = async () => {
-          const name = this.accountName.trim().split(/\s/)[0];
-          if (!name.length) {
-            return;
-          }
-          const result = await User.checkUsername(name, this.accountEmail);
+      const checkUsername = async () => {
+        const username = this.model.accountUsername.trim().split("_")[0];
+        const result = await User.checkUsername(username, this.accountEmail);
 
-          if (result.suggestion) {
-            this.setProperties({
-              accountUsername: result.suggestion,
-              prefilledUsername: result.suggestion,
-            });
-          } else {
-            this.setProperties({
-              accountUsername: name,
-              prefilledUsername: name,
-            });
-          }
-        };
-
-        if (!data) {
-          checkUsername();
+        if (result.suggestion) {
+          this.setProperties({
+            accountUsername: result.suggestion,
+            prefilledUsername: result.suggestion,
+          });
         } else {
-          discourseDebounce(this, () => checkUsername(), 500);
+          this.setProperties({
+            accountUsername: username,
+            prefilledUsername: username,
+          });
         }
+      };
+
+      if (!data) {
+        checkUsername();
+      } else {
+        discourseDebounce(this, () => checkUsername(), 1500);
       }
     },
   });

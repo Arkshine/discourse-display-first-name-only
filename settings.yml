@@ -1,4 +1,0 @@
-hide_username_on_login:
-  type: bool
-  default: false
-  description: "Hide the username field on the login page"

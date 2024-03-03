@@ -25,7 +25,10 @@ export default apiInitializer("1.8.0", (api) => {
 
     @observes("model.accountUsername")
     prefillUsername(data) {
-      if (this.prefilledUsername === this.model.accountUsername) {
+      if (
+        this.prefilledUsername === this.model.accountUsername ||
+        !this.model.accountUsername
+      ) {
         return;
       }
 

@@ -1,6 +1,3 @@
-enable_debug:
-  type: bool
-  default: true
 allow_username_edit:
   type: bool
   default: false

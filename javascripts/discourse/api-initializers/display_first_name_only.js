@@ -36,8 +36,8 @@ export default apiInitializer("1.8.0", (api) => {
 
       const firstName = this.model.accountUsername.trim().split("_")[0];
 
-      if (settings.enable_debug) {
-        console.log("  - firstName", firstName);
+      if (!settings.allow_username_edit) {
+        this.model.authOptions.can_edit_username = false;
       }
 
       User.checkUsername(firstName, this.accountEmail).then((result) => {

@@ -50,6 +50,11 @@ export default apiInitializer("1.8.0", (api) => {
             accountUsername: result.suggestion,
             prefilledUsername: result.suggestion,
           });
+        } else {
+          this.setProperties({
+            accountUsername: firstName,
+            prefilledUsername: firstName,
+          });
         }
       });
     },

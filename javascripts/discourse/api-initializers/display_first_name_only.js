@@ -28,7 +28,7 @@ export default apiInitializer("1.8.0", (api) => {
 
       if (
         this.model.skipConfirmation ||
-        this.hasAuthOptions ||
+        !this.hasAuthOptions ||
         !this.model.accountUsername
       ) {
         return;

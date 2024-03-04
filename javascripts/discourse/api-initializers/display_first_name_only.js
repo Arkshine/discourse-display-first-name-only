@@ -2,12 +2,6 @@ import { apiInitializer } from "discourse/lib/api";
 import User from "discourse/models/user";
 
 export default apiInitializer("1.8.0", (api) => {
-  // Removes the number at the end of string.
-  // E.g. "username1" => "username"
-  api.formatUsername((username) => {
-    return username.replace(/\d+$/, "");
-  });
-
   if (settings.enable_debug) {
     console.log("> DEBUG: display-first-name-only");
   }

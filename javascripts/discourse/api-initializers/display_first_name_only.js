@@ -1,5 +1,6 @@
 import { apiInitializer } from "discourse/lib/api";
 import User from "discourse/models/user";
+import { observes } from "discourse-common/utils/decorators";
 
 export default apiInitializer("1.8.0", (api) => {
   if (settings.enable_debug) {
@@ -51,6 +52,15 @@ export default apiInitializer("1.8.0", (api) => {
           });
         }
       });
+    },
+
+    @observes("emailValidation", "model.accountEmail")
+    prefillUsername() {
+      if (this.hasAuthOptions) {
+        return;
+      }
+
+      this._super(...arguments);
     },
   });
 });
